@@ -1,9 +1,8 @@
 uint32_t MaxWaitTime = 100000;
-int16_t analogReads = 0;
 unsigned long startTime;
 uint8_t incomingMessage[11];
 uint8_t incomingBytes = 11;
-
+bool whileFlag = true;
 //Create analogInputpairs
 struct analogInputs {
   uint16_t input15;
@@ -18,6 +17,8 @@ struct LEDpins {
 };
 
 struct LEDpins LEDs[8];
+
+
 
 void setup() {
 
