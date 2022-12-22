@@ -33,5 +33,9 @@ while ( (repeat < repeats || repeats == 0) && whileFlag == true)  {
  changePWM(LED);
  repeat++;
 }
+  PORTA &= B01010101;
+  PORTC &= B01010101;
+  delay(2000);
+  Serial.println(F("Leaving complex Light!"));
 }
 

@@ -44,7 +44,6 @@ void FRET(uint8_t LEDnumber, LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[
 
   PORTA &= B01010101;
   PORTC &= B01010101;
-  memset(incomingMessage, 0, sizeof incomingMessage);
   delay(2000);
   Serial.println(F("Leaving FRET!"));
 }

@@ -1,7 +1,5 @@
 uint32_t MaxWaitTime = 100000;
 unsigned long startTime;
-uint8_t incomingMessage[11];
-uint8_t incomingBytes = 11;
 bool whileFlag = true;
 //Create analogInputpairs
 struct analogInputs {
@@ -68,25 +66,42 @@ void loop() {
 }
 
 
-void scanForInput() {
-
-  startTime = millis();
-
-  while (Serial.available() < incomingBytes  && ((millis() - startTime) < MaxWaitTime))
-  {
-    // hang in this loop until we either get "incomingBytes" bytes of data or MaxWaitTime second
-    // has gone by
-  }
-
-  if (Serial.available() < incomingBytes )
-  {
-    // the data didn't come in - handle that problem here
-    Serial.println(F("ERROR - Didn't get all bytes of data!"));
-  }
-  else
-  {
-    for (int n = 0; n < incomingBytes; n++) {
-      incomingMessage[n] = Serial.read(); // Then: Get them.
+uint8_t waitForProgrammInfo() {
+    uint8_t incomingBytes = 1;
+    uint8_t programNumber;
+    while (!Serial.available())
+    {
+     // wait for seriel communication
     }
-  }
+
+     programNumber = Serial.read();
 }
+
+void readProgramDataAndStart(uint8_t programNumber){
+  switch (programNumber) {
+  case 1: 
+    uint8_t LEDnumber = Serial.read();
+    unsigned long tOn[LEDnumber];
+    unsigned long tPause[LEDnumber];
+    uint8_t pwmVal[LEDnumber];
+    for (int i = 0; i < LEDnumber; i++) {
+      pwmVal[i] = Serial.read();
+      tOn[i] =  Serial.parseInt();
+      tPause[i] =  Serial.parseInt();
+    }
+  FRET(LEDnumber,  LEDs, pwmVal,  tOn, tPause);
+
+    break;
+  
+  case 2:
+    // code to execute if expression is 2
+    break;
+  case 3:
+    // code to execute if expression is 3
+    break;
+  default:
+    Serial.println(F("ERROR - Program not found!"));
+    break;
+}
+}
+  
