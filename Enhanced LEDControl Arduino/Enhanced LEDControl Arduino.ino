@@ -1,12 +1,15 @@
+//Some global variables
 uint32_t MaxWaitTime = 100000;
 unsigned long startTime;
 bool whileFlag = true;
+uint8_t LEDnumber;
+
 //Create analogInputpairs
 struct analogInputs {
   uint16_t input15;
   uint16_t input14;
 };
-struct analogInputs analogInput[4][250];
+struct analogInputs analogInput[4][250]; //7.5ms max 
 
 //Create Structs for LED and pwm pairs
 struct LEDpins {
@@ -16,10 +19,7 @@ struct LEDpins {
 
 struct LEDpins LEDs[8];
 
-
-
 void setup() {
-
   //Create LED on/off and pwm pairs
   LEDs[0].LEDPin = 23;
   LEDs[0].PWMPin = 4;
@@ -39,11 +39,9 @@ void setup() {
   LEDs[7].PWMPin = 11;
 
 
-
-
-  Serial.begin(500000);           //  setup serial
-  ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2)); // clear prescaler bits
-  ADCSRA |= bit (ADPS2);                               //  prescale Value 16
+  Serial.begin(500000);                               //  setup serial
+  ADCSRA &= ~(bit(ADPS0) | bit(ADPS1) | bit(ADPS2));  // clear prescaler bits
+  ADCSRA |= bit(ADPS2);                               //  prescale Value 16
 
   //Set Pins to Output
   DDRG = B00100000;  //Set PWM to output DP4
@@ -53,55 +51,89 @@ void setup() {
   DDRA = B10101010;  // Set LED Pins to output DP 23,25,27,29
   DDRC = B00010101;  // Set LED Pins to output DP 31,33,35,37
   DDRL = B00000101;  // Set LTC Pins to output DP 47,49
-  DDRK &=B11111100; 
+  DDRK &= B11111100;
   // Clear bits 0 and 1 of the DDRK register (Analog Inputs 14 and 15 to read)
   Serial.println("Ready");
-
-
 }
 
 
 void loop() {
-
+  Serial.println(F("Waiting for program Info..."));
+  delay(1000);
+  uint8_t programNumber = waitForProgramInfo();
+  readProgramDataAndStart(programNumber);
 }
 
 
-uint8_t waitForProgrammInfo() {
-    uint8_t incomingBytes = 1;
-    uint8_t programNumber;
-    while (!Serial.available())
-    {
-     // wait for seriel communication
-    }
-
-     programNumber = Serial.read();
+uint8_t waitForProgramInfo() {
+  // uint8_t incomingBytes = 1;
+  uint8_t programNumber;
+  programNumber = readSerialDataInt8();
+  Serial.println(programNumber);
+  return (programNumber);
 }
 
-void readProgramDataAndStart(uint8_t programNumber){
+void readProgramDataAndStart(uint8_t programNumber) {
+  unsigned long *tOn;
+  unsigned long tPause;
+  uint8_t *pwmVal;
+  uint8_t *selectedLEDs;
+
   switch (programNumber) {
-  case 1: 
-    uint8_t LEDnumber = Serial.read();
-    unsigned long tOn[LEDnumber];
-    unsigned long tPause[LEDnumber];
-    uint8_t pwmVal[LEDnumber];
-    for (int i = 0; i < LEDnumber; i++) {
-      pwmVal[i] = Serial.read();
-      tOn[i] =  Serial.parseInt();
-      tPause[i] =  Serial.parseInt();
-    }
-  FRET(LEDnumber,  LEDs, pwmVal,  tOn, tPause);
+    case 1: { //FRET
+      Serial.println(F("Program 1: FRET selected. Waiting for data..."));
+      LEDnumber = readSerialDataInt8();
+      Serial.println(LEDnumber);
 
-    break;
-  
-  case 2:
-    // code to execute if expression is 2
-    break;
-  case 3:
-    // code to execute if expression is 3
-    break;
-  default:
-    Serial.println(F("ERROR - Program not found!"));
-    break;
+      tOn = new unsigned long[LEDnumber];
+      pwmVal = new uint8_t[LEDnumber];
+      selectedLEDs = new uint8_t[LEDnumber];
+
+      for (int i = 0; i < LEDnumber; i++) {
+        Serial.println(i);
+        selectedLEDs[i] = readSerialDataInt8();
+        pwmVal[i] = readSerialDataInt8();
+        tOn[i] = readSerialDataLong();
+      }
+      Serial.println("Next");
+
+      tPause = readSerialDataLong();
+      Serial.println(F("Data Received, Starting FRET"));
+      FRET(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause);
+      break;
+    }
+    case 2: { //Light
+          Serial.println(F("Program 1: Light selected. Waiting for data..."));
+      LEDnumber = Serial.read();
+      pwmVal = new uint8_t[LEDnumber];
+      selectedLEDs = new uint8_t[LEDnumber];
+      for (int i = 0; i < LEDnumber; i++) {
+        selectedLEDs[i] = Serial.read();
+        pwmVal[i] = Serial.read();
+      }
+      Serial.println(F("Data Received, Starting Light"));
+      Light(LEDnumber, selectedLEDs, LEDs, pwmVal);
+
+      break;}
+    case 3:  {//complexLight
+      Serial.println(F("Program 3: complexLight selected. Waiting for data..."));
+      LEDnumber = Serial.read();
+      tOn = new unsigned long[LEDnumber];
+      pwmVal = new uint8_t[LEDnumber];
+      selectedLEDs = new uint8_t[LEDnumber];
+      for (int i = 0; i < LEDnumber; i++) {
+        selectedLEDs[i] = Serial.read();
+        pwmVal[i] = Serial.read();
+        tOn[i] = Serial.parseInt();
+      }
+      tPause = Serial.parseInt();
+      uint8_t repeats = Serial.read();
+      Serial.println(F("Data Received, Starting complexLight"));
+      complexLight(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause, repeats);
+      break;
+    }
+    default:
+      Serial.println(F("ERROR - Program not found!"));
+      break;
+  }
 }
-}
-  

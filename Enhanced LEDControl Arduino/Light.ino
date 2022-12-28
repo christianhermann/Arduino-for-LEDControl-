@@ -1,4 +1,4 @@
- void Light(uint8_t LEDnumber, LEDpins LED[], uint8_t pwmVal[]) {
+ void Light(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[]) {
   // Determine the port and mask for the specified pin
   volatile uint8_t *port[LEDnumber];
   uint8_t mask[LEDnumber];
@@ -6,12 +6,13 @@
 
   //Setup ports and masks for fast on and off switching; Also set PWMs and Lights on
   for (int i = 0; i < LEDnumber; i++) {
-    if (LED[i].LEDPin < 30) {
+    uint8_t selLED = selectedLEDs[i];
+    if (LED[selLED].LEDPin < 30) {
       port[i] = &PORTA;
-      mask[i] = 1 << LED[i].LEDPin - 22;
-    } else if (LED[i].LEDPin < 38) {
+      mask[i] = 1 << LED[selLED].LEDPin - 22;
+    } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTC;
-      mask[i] = 1 << (38 -  LED[i].LEDPin);
+      mask[i] = 1 << (38 -  LED[selLED].LEDPin);
     }
     analogWrite(LED[i].PWMPin, pwmVal[i]);
     *port[i] |= mask[i];  //Pin  High

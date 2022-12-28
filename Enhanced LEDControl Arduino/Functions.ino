@@ -34,3 +34,24 @@ void changePWM(LEDpins LED[]) {
     analogWrite(LED[pin].PWMPin, pwmVal);
   }
 }
+
+uint8_t readSerialDataInt8() {
+    while (true) {
+  if (Serial.available() > 0) {
+    // Read data from serial connection
+    int data = Serial.read();
+    return(data);
+  }
+    }
+} 
+
+unsigned long readSerialDataLong() {
+      while (true) {
+
+  if (Serial.available() > 3) {
+    // Read data from serial connection
+    unsigned long data = Serial.parseInt();
+    return(data);
+  }
+      }
+} 
