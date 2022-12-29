@@ -1,5 +1,8 @@
-uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner, unsigned long tAfterOnInner, unsigned long tBefStopInner) {
-  uint8_t analogReadsInner;
+uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner, unsigned long tAfterOnInner, unsigned long tBefStopInner,  volatile uint8_t *port, uint8_t mask) {
+  uint8_t analogReadsInner = 0;
+
+
+  *port |= mask;  //Pin  High
   while (tBefStopInner - tAfterOnInner < tOnInner) {
     //Read photodiode inputs
     analogInput[LEDNum][analogReadsInner].input15 = analogRead(15);
@@ -7,6 +10,7 @@ uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner, unsigned long tAfter
     analogReadsInner++;
     tBefStopInner = micros();
   }
+  *port &= ~mask;  // Pin  LOW
   return (analogReadsInner);
 }
 
@@ -48,10 +52,16 @@ uint8_t readSerialDataInt8() {
 unsigned long readSerialDataLong() {
       while (true) {
 
-  if (Serial.available() > 3) {
-    // Read data from serial connection
-    unsigned long data = Serial.parseInt();
-    return(data);
+    if (Serial.available() >= 4) {
+    uint8_t data[4];  // Array to store 4 bytes of data
+    // Read 4 bytes of data from serial connection
+    int bytesRead = Serial.readBytes(data, 4);
+    if (bytesRead == 4) {
+      // Convert 4 bytes of data to unsigned long integer
+      uint32_t value;
+      memcpy(&value, data, 4);
+      return value;
+    }
   }
       }
 } 

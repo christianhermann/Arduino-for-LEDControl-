@@ -69,7 +69,6 @@ uint8_t waitForProgramInfo() {
   // uint8_t incomingBytes = 1;
   uint8_t programNumber;
   programNumber = readSerialDataInt8();
-  Serial.println(programNumber);
   return (programNumber);
 }
 
@@ -83,19 +82,21 @@ void readProgramDataAndStart(uint8_t programNumber) {
     case 1: { //FRET
       Serial.println(F("Program 1: FRET selected. Waiting for data..."));
       LEDnumber = readSerialDataInt8();
-      Serial.println(LEDnumber);
 
       tOn = new unsigned long[LEDnumber];
       pwmVal = new uint8_t[LEDnumber];
       selectedLEDs = new uint8_t[LEDnumber];
 
       for (int i = 0; i < LEDnumber; i++) {
-        Serial.println(i);
+   //   Serial.println(F("Loop"));
+
         selectedLEDs[i] = readSerialDataInt8();
         pwmVal[i] = readSerialDataInt8();
         tOn[i] = readSerialDataLong();
+  //      Serial.println(F("LoopFin"));
+  delay(250);
+
       }
-      Serial.println("Next");
 
       tPause = readSerialDataLong();
       Serial.println(F("Data Received, Starting FRET"));

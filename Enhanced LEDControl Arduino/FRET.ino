@@ -27,10 +27,10 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
       analogReads[i] = 0;
       tAfterOn[i] = micros();
       tBefStop[i] = micros();
-      *port[i] |= mask[i];  //Pin  High
-      analogReads[i] = measureLED(i, tOn, tAfterOn[i], tBefStop[i]);
+//     *port[i] |= mask[i];  //Pin  High
+      analogReads[i] = measureLED(i, tOn[i], tAfterOn[i], tBefStop[i], *port[i], mask[i]);
       tAfterStop[i] = micros();
-      *port[i] &= ~mask[i];  // Pin  LOW
+//      *port[i] &= ~mask[i];  // Pin  LOW
     }
     for (int i = 0; i < LEDnumber; i++) {
       sendData(i, tAfterStop[i], tAfterOn[i], analogReads[i]);
