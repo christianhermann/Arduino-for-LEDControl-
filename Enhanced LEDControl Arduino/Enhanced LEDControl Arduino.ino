@@ -40,8 +40,7 @@ void setup() {
 
 
   Serial.begin(500000);                               //  setup serial
-  ADCSRA &= ~(bit(ADPS0) | bit(ADPS1) | bit(ADPS2));  // clear prescaler bits
-  ADCSRA |= bit(ADPS2);                               //  prescale Value 16
+
 
   //Set Pins to Output
   DDRG = B00100000;  //Set PWM to output DP4
@@ -53,6 +52,8 @@ void setup() {
   DDRL = B00000101;  // Set LTC Pins to output DP 47,49
   DDRK &= B11111100;
   // Clear bits 0 and 1 of the DDRK register (Analog Inputs 14 and 15 to read)
+  ADCSRA &= ~(bit(ADPS0) | bit(ADPS1) | bit(ADPS2));  // clear prescaler bits
+  ADCSRA |= bit(ADPS2);                               //  prescale Value 16
   Serial.println("Ready");
 }
 
@@ -95,7 +96,6 @@ void readProgramDataAndStart(uint8_t programNumber) {
         tOn[i] = readSerialDataLong();
   //      Serial.println(F("LoopFin"));
   delay(250);
-
       }
 
       tPause = readSerialDataLong();

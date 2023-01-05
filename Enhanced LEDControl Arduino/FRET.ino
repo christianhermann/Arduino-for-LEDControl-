@@ -9,6 +9,8 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
   unsigned long tAfterOn[LEDnumber];
   uint16_t analogReads[LEDnumber];
 
+  
+
   //Setup ports and masks for fast on and off switching; Also set PWMs
   for (int i = 0; i < LEDnumber; i++) {
     uint8_t selLED = selectedLEDs[i];
@@ -22,28 +24,28 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
     analogWrite(LED[i].PWMPin, pwmVal[i]);
   }
 
-  while (whileFlag = true) {
+  while (whileFlag == true) {
     for (int i = 0; i < LEDnumber; i++) {
       analogReads[i] = 0;
-      tAfterOn[i] = micros();
-      tBefStop[i] = micros();
+//      tAfterOn[i] = micros();
+//      tBefStop[i] = micros();
 //     *port[i] |= mask[i];  //Pin  High
-      analogReads[i] = measureLED(i, tOn[i], tAfterOn[i], tBefStop[i], *port[i], mask[i]);
-      tAfterStop[i] = micros();
+      analogReads[i] = measureLED(i, tOn[i], *port[i], mask[i],  &tAfterOn[i], &tAfterStop[i]);
+//      tAfterStop[i] = micros();
 //      *port[i] &= ~mask[i];  // Pin  LOW
     }
-    for (int i = 0; i < LEDnumber; i++) {
-      sendData(i, tAfterStop[i], tAfterOn[i], analogReads[i]);
-    }
+      sendData(LEDnumber, tAfterStop, tAfterOn, analogReads);
+    
     changePWM(LED);
     tBefDelay = micros();
-    while (tBefDelay - tAfterStop[LEDnumber - 1] < tPause) tBefDelay = micros();
+    while (tBefDelay - tAfterStop[LEDnumber] < tPause) tBefDelay = micros();
   }
 
 
   PORTA &= B01010101;
   PORTC &= B01010101;
   delay(2000);
+  whileFlag = true;
   Serial.println(F("Leaving FRET!"));
 }
 

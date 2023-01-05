@@ -1,8 +1,9 @@
-uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner, unsigned long tAfterOnInner, unsigned long tBefStopInner,  volatile uint8_t *port, uint8_t mask) {
+uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner,  volatile uint8_t *port, uint8_t mask, unsigned long  *tAfterOnOut, unsigned long *tAfterStopOut) {
   uint8_t analogReadsInner = 0;
 
-
   *port |= mask;  //Pin  High
+   unsigned long tAfterOnInner = micros();
+   unsigned long tBefStopInner = micros();
   while (tBefStopInner - tAfterOnInner < tOnInner) {
     //Read photodiode inputs
     analogInput[LEDNum][analogReadsInner].input15 = analogRead(15);
@@ -11,27 +12,37 @@ uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner, unsigned long tAfter
     tBefStopInner = micros();
   }
   *port &= ~mask;  // Pin  LOW
+  unsigned long tAfterStopInner = micros();
+
+  *tAfterOnOut = tAfterOnInner;
+  *tAfterStopOut = tAfterStopInner;
+
   return (analogReadsInner);
 }
 
-void sendData(uint8_t LEDNum, unsigned long tAfterStopInner, unsigned long tAfterOnInner, uint16_t analogReadsInner) {
-  Serial.write((uint8_t *)&tAfterOnInner, 4);
-  Serial.write((uint8_t *)&tAfterStopInner, 4);
-  Serial.write((uint8_t *)&analogReadsInner, 2);
+void sendData(uint8_t LEDnumber, unsigned long tAfterStopInner[], unsigned long tAfterOnInner[], uint16_t analogReadsInner[]) {
 
-  for (int k = 0; k < analogReadsInner; k++) {
-    Serial.write(highByte(analogInput[LEDNum][k].input15));
-    Serial.write(lowByte(analogInput[LEDNum][k].input15));
+  for (int i = 0; i < LEDnumber; i++) {
+  Serial.write((uint8_t *)&tAfterOnInner[i], 4);
+  Serial.write((uint8_t *)&tAfterStopInner[i], 4);
+  Serial.write((uint8_t *)&analogReadsInner[i], 2);
+
+  for (int k = 0; k < analogReadsInner[i]; k++) {
+    Serial.write(highByte(analogInput[i][k].input15));
+    Serial.write(lowByte(analogInput[i][k].input15));
   }
 
-  for (int k = 0; k < analogReadsInner; k++) {
-    Serial.write(highByte(analogInput[LEDNum][k].input14));
-    Serial.write(lowByte(analogInput[LEDNum][k].input14));
+  for (int k = 0; k < analogReadsInner[i]; k++) {
+    Serial.write(highByte(analogInput[i][k].input14));
+    Serial.write(lowByte(analogInput[i][k].input14));
   }
+
+    }
+
 }
 
 void changePWM(LEDpins LED[]) {
-  while (Serial.available() > 1) {
+  if (Serial.available() > 1) {
     uint8_t pin = Serial.read();
     uint8_t pwmVal = Serial.read();
     if (pwmVal == 0) whileFlag = false;

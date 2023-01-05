@@ -37,6 +37,7 @@ while ( (repeat < repeats || repeats == 0) && whileFlag == true)  {
   PORTA &= B01010101;
   PORTC &= B01010101;
   delay(2000);
+  whileFlag = true;
   Serial.println(F("Leaving complex Light!"));
 }
 
