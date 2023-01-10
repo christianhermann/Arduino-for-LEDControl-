@@ -1,4 +1,4 @@
-void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[], unsigned long tPause[], uint8_t repeats) {
+void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[], unsigned long tPause[],unsigned long tPauseAll, uint8_t repeats) {
   // Determine the port and mask for the specified pin
   volatile uint8_t *port[LEDnumber];
   uint8_t mask[LEDnumber];

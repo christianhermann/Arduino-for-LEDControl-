@@ -75,7 +75,7 @@ uint8_t waitForProgramInfo() {
 
 void readProgramDataAndStart(uint8_t programNumber) {
   unsigned long *tOn;
-  unsigned long tPause;
+  unsigned long *tPause;
   uint8_t *pwmVal;
   uint8_t *selectedLEDs;
 
@@ -89,12 +89,9 @@ void readProgramDataAndStart(uint8_t programNumber) {
       selectedLEDs = new uint8_t[LEDnumber];
 
       for (int i = 0; i < LEDnumber; i++) {
-   //   Serial.println(F("Loop"));
-
         selectedLEDs[i] = readSerialDataInt8();
         pwmVal[i] = readSerialDataInt8();
         tOn[i] = readSerialDataLong();
-  //      Serial.println(F("LoopFin"));
   delay(250);
       }
 
@@ -122,15 +119,19 @@ void readProgramDataAndStart(uint8_t programNumber) {
       tOn = new unsigned long[LEDnumber];
       pwmVal = new uint8_t[LEDnumber];
       selectedLEDs = new uint8_t[LEDnumber];
-      for (int i = 0; i < LEDnumber; i++) {
-        selectedLEDs[i] = Serial.read();
-        pwmVal[i] = Serial.read();
-        tOn[i] = Serial.parseInt();
+      tPause = new unsigned long[LEDnumber];
+      unsigned long tPauseAll;
+  for (int i = 0; i < LEDnumber; i++) {
+        selectedLEDs[i] = readSerialDataInt8();
+        pwmVal[i] = readSerialDataInt8();
+        tOn[i] = readSerialDataLong();
+        tPause[i] = readSerialDataLong();
+  delay(250);
       }
-      tPause = Serial.parseInt();
+      tPauseAll = Serial.parseInt();
       uint8_t repeats = Serial.read();
       Serial.println(F("Data Received, Starting complexLight"));
-      complexLight(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause, repeats);
+      complexLight(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause,tPauseAll, repeats);
       break;
     }
     default:
