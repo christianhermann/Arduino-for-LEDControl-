@@ -17,13 +17,13 @@
     analogWrite(LED[i].PWMPin, pwmVal[i]);
     *port[i] |= mask[i];  //Pin  High
   }
-  while (whileFlag = true) {
+  while (whileFlag == true) {
       changePWM(LED);
  }
 
   PORTA &= B01010101;
   PORTC &= B01010101;
-  delay(2000);
+  whileFlag = true;
   Serial.println(F("Leaving Light!"));
  }
 

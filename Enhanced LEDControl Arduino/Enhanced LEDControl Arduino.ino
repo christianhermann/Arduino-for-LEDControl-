@@ -102,12 +102,10 @@ void readProgramDataAndStart(uint8_t programNumber) {
     }
     case 2: { //Light
           Serial.println(F("Program 1: Light selected. Waiting for data..."));
-      LEDnumber = Serial.read();
-      pwmVal = new uint8_t[LEDnumber];
-      selectedLEDs = new uint8_t[LEDnumber];
+      LEDnumber = readSerialDataInt8();
       for (int i = 0; i < LEDnumber; i++) {
-        selectedLEDs[i] = Serial.read();
-        pwmVal[i] = Serial.read();
+        selectedLEDs[i] = readSerialDataInt8();
+        pwmVal[i] = readSerialDataInt8();
       }
       Serial.println(F("Data Received, Starting Light"));
       Light(LEDnumber, selectedLEDs, LEDs, pwmVal);
@@ -128,8 +126,8 @@ void readProgramDataAndStart(uint8_t programNumber) {
         tPause[i] = readSerialDataLong();
   delay(250);
       }
-      tPauseAll = Serial.parseInt();
-      uint8_t repeats = Serial.read();
+      tPauseAll =  readSerialDataLong();
+      uint8_t repeats = readSerialDataInt8();;
       Serial.println(F("Data Received, Starting complexLight"));
       complexLight(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause,tPauseAll, repeats);
       break;
