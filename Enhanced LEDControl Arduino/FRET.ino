@@ -21,9 +21,9 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
       port[i] = &PORTC;
       mask[i] = 1 << (38 -  LED[selLED].LEDPin);
     }
-    analogWrite(LED[i].PWMPin, pwmVal[i]);
+    analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
-
+  
   while (whileFlag == true) {
     for (int i = 0; i < LEDnumber; i++) {
       analogReads[i] = 0;

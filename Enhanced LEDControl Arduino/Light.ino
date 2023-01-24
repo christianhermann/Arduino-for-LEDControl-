@@ -7,6 +7,8 @@
   //Setup ports and masks for fast on and off switching; Also set PWMs and Lights on
   for (int i = 0; i < LEDnumber; i++) {
     uint8_t selLED = selectedLEDs[i];
+
+
     if (LED[selLED].LEDPin < 30) {
       port[i] = &PORTA;
       mask[i] = 1 << LED[selLED].LEDPin - 22;
@@ -14,7 +16,7 @@
       port[i] = &PORTC;
       mask[i] = 1 << (38 -  LED[selLED].LEDPin);
     }
-    analogWrite(LED[i].PWMPin, pwmVal[i]);
+    analogWrite(LED[selLED].PWMPin, pwmVal[i]);
     *port[i] |= mask[i];  //Pin  High
   }
   while (whileFlag == true) {

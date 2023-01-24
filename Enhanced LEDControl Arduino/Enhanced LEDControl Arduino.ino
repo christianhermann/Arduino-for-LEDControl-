@@ -51,6 +51,8 @@ void setup() {
   DDRC = B00010101;  // Set LED Pins to output DP 31,33,35,37
   DDRL = B00000101;  // Set LTC Pins to output DP 47,49
   DDRK &= B11111100;
+  PORTL = PORTL | B00000101;
+  PORTB = PORTB | B00000101;
   // Clear bits 0 and 1 of the DDRK register (Analog Inputs 14 and 15 to read)
   ADCSRA &= ~(bit(ADPS0) | bit(ADPS1) | bit(ADPS2));  // clear prescaler bits
   ADCSRA |= bit(ADPS2);                               //  prescale Value 16
@@ -103,6 +105,8 @@ void readProgramDataAndStart(uint8_t programNumber) {
     case 2: { //Light
           Serial.println(F("Program 1: Light selected. Waiting for data..."));
       LEDnumber = readSerialDataInt8();
+      selectedLEDs = new uint8_t[LEDnumber];
+      pwmVal = new uint8_t[LEDnumber];
       for (int i = 0; i < LEDnumber; i++) {
         selectedLEDs[i] = readSerialDataInt8();
         pwmVal[i] = readSerialDataInt8();
@@ -113,7 +117,7 @@ void readProgramDataAndStart(uint8_t programNumber) {
       break;}
     case 3:  {//complexLight
       Serial.println(F("Program 3: complexLight selected. Waiting for data..."));
-      LEDnumber = Serial.read();
+      LEDnumber = readSerialDataInt8();
       tOn = new unsigned long[LEDnumber];
       pwmVal = new uint8_t[LEDnumber];
       selectedLEDs = new uint8_t[LEDnumber];
@@ -127,7 +131,7 @@ void readProgramDataAndStart(uint8_t programNumber) {
   delay(250);
       }
       tPauseAll =  readSerialDataLong();
-      uint8_t repeats = readSerialDataInt8();;
+      uint8_t repeats = readSerialDataInt8();
       Serial.println(F("Data Received, Starting complexLight"));
       complexLight(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause,tPauseAll, repeats);
       break;

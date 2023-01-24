@@ -17,7 +17,7 @@ void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint
       port[i] = &PORTC;
       mask[i] = 1 << (38 - LED[selLED].LEDPin);
     }
-    analogWrite(LED[i].PWMPin, pwmVal[i]);
+    analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
 
   uint8_t repeat = 0;
@@ -26,11 +26,25 @@ void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint
       tAfterOn = micros();
       tBefStop = micros();
       *port[i] |= mask[i];  //Pin  High
-      while (tBefStop - tAfterOn < tOn[i]) tBefStop = micros();
+      while (tBefStop - tAfterOn < tOn[i]) 
+      {
+      changePWM(LED);
+                  if (whileFlag == false) {
+              goto fin; // Might change this to a variable based solution in the future
+            }
+            tBefStop = micros();
+      }
       tAfterStop = micros();
       *port[i] &= ~mask[i];  // Pin  LOW
       tBefDelay = micros();
-      while (tBefDelay - tAfterStop < tPause[i]) tBefDelay = micros();
+      while (tBefDelay - tAfterStop < tPause[i]) {
+            changePWM(LED);
+
+            if (whileFlag == false) {
+              goto fin;
+            }
+                        tBefDelay = micros();
+            }
     }
     tBefDelay = micros();
     tAfterStop = micros();
@@ -38,6 +52,7 @@ void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint
     changePWM(LED);
     repeat++;
   }
+  fin:
   PORTA &= B01010101;
   PORTC &= B01010101;
   whileFlag = true;
