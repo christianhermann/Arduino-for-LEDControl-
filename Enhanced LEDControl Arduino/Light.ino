@@ -27,6 +27,7 @@
   PORTC &= B01010101;
   whileFlag = true;
   Serial.println(F("Leaving Light!"));
+  Serial.flush();
  }
 
 

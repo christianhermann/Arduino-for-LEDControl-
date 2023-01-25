@@ -38,7 +38,6 @@ void sendData(uint8_t LEDnumber, unsigned long tAfterStopInner[], unsigned long 
   }
 
     }
-
 }
 
 void changePWM(LEDpins LED[]) {
@@ -48,6 +47,7 @@ void changePWM(LEDpins LED[]) {
     if (pwmVal == 0) whileFlag = false;
     analogWrite(LED[pin].PWMPin, pwmVal);
   }
+  else whileFlag = true;
 }
 
 uint8_t readSerialDataInt8() {
@@ -76,3 +76,4 @@ unsigned long readSerialDataLong() {
   }
       }
 } 
+

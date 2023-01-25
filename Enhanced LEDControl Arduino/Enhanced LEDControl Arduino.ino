@@ -77,7 +77,7 @@ uint8_t waitForProgramInfo() {
 
 void readProgramDataAndStart(uint8_t programNumber) {
   unsigned long *tOn;
-  unsigned long *tPause;
+  unsigned long tPause;
   uint8_t *pwmVal;
   uint8_t *selectedLEDs;
 
@@ -94,10 +94,11 @@ void readProgramDataAndStart(uint8_t programNumber) {
         selectedLEDs[i] = readSerialDataInt8();
         pwmVal[i] = readSerialDataInt8();
         tOn[i] = readSerialDataLong();
-  delay(250);
+        delay(100);
       }
-
+      
       tPause = readSerialDataLong();
+      
       Serial.println(F("Data Received, Starting FRET"));
       FRET(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause);
       break;
@@ -121,14 +122,14 @@ void readProgramDataAndStart(uint8_t programNumber) {
       tOn = new unsigned long[LEDnumber];
       pwmVal = new uint8_t[LEDnumber];
       selectedLEDs = new uint8_t[LEDnumber];
-      tPause = new unsigned long[LEDnumber];
+      unsigned long tPause[LEDnumber];
       unsigned long tPauseAll;
   for (int i = 0; i < LEDnumber; i++) {
         selectedLEDs[i] = readSerialDataInt8();
         pwmVal[i] = readSerialDataInt8();
         tOn[i] = readSerialDataLong();
         tPause[i] = readSerialDataLong();
-  delay(250);
+  delay(100);
       }
       tPauseAll =  readSerialDataLong();
       uint8_t repeats = readSerialDataInt8();
@@ -137,7 +138,8 @@ void readProgramDataAndStart(uint8_t programNumber) {
       break;
     }
     default:
-      Serial.println(F("ERROR - Program not found!"));
+      Serial.println(F("ERROR - Program not found!- Restarting now"));
+Serial.flush();
       break;
   }
 }

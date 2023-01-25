@@ -19,7 +19,7 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTC;
-      mask[i] = 1 << (38 -  LED[selLED].LEDPin);
+      mask[i] = 1 << (38 - LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
@@ -30,7 +30,7 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
 //      tAfterOn[i] = micros();
 //      tBefStop[i] = micros();
 //     *port[i] |= mask[i];  //Pin  High
-      analogReads[i] = measureLED(i, tOn[i], *port[i], mask[i],  &tAfterOn[i], &tAfterStop[i]);
+      analogReads[i] = measureLED(i, tOn[i], port[i], mask[i],  &tAfterOn[i], &tAfterStop[i]);
 //      tAfterStop[i] = micros();
 //      *port[i] &= ~mask[i];  // Pin  LOW
     }
@@ -38,7 +38,8 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
     
     changePWM(LED);
     tBefDelay = micros();
-    while (tBefDelay - tAfterStop[LEDnumber] < tPause) tBefDelay = micros();
+    while (tBefDelay - tAfterStop[LEDnumber-1] < tPause) tBefDelay = micros();
+
   }
 
 
@@ -47,5 +48,6 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
   delay(2000);
   whileFlag = true;
   Serial.println(F("Leaving FRET!"));
+  Serial.flush();
 }
 
