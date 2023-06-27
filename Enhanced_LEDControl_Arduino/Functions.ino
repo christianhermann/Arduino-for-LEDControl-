@@ -1,5 +1,5 @@
 uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner,  volatile uint8_t *port, uint8_t mask, unsigned long  *tAfterOnOut, unsigned long *tAfterStopOut) {
-  uint8_t analogReadsInner = 0;
+  uint16_t analogReadsInner = 0;
 
   *port |= mask;  //Pin  High
    unsigned long tAfterOnInner = micros();
