@@ -20,6 +20,22 @@ uint16_t measureLED(uint8_t LEDNum, unsigned long tOnInner,  volatile uint8_t *p
   return (analogReadsInner);
 }
 
+void switchLED(uint8_t LEDNum, unsigned long tOnInner,  volatile uint8_t *port, uint8_t mask) {
+
+  *port |= mask;  //Pin  High
+  //Set Trigger
+  PORTC |= (1 << 7);
+   unsigned long tAfterOnInner = micros();
+   unsigned long tBefStopInner = micros();
+  while (tBefStopInner - tAfterOnInner < tOnInner) {
+    tBefStopInner = micros();
+  }
+  PORTC &= ~(1 << 7);
+  // Set Trigger
+  *port &= ~mask;  // Pin  LOW
+}
+
+
 void sendData(uint8_t LEDnumber, unsigned long tAfterStopInner[], unsigned long tAfterOnInner[], uint16_t analogReadsInner[]) {
 
   for (int i = 0; i < LEDnumber; i++) {

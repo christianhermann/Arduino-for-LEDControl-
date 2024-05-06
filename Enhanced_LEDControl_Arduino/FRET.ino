@@ -51,3 +51,47 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
   Serial.flush();
 }
 
+
+void FRETMFLI(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[], unsigned long tPause) {
+  // Determine the port and mask for the specified pin
+  volatile uint8_t *port[LEDnumber];
+  uint8_t mask[LEDnumber];
+
+  unsigned long tAfterStop[LEDnumber];
+  unsigned long tBefDelay;
+
+  //Setup ports and masks for fast on and off switching; Also set PWMs
+  for (int i = 0; i < LEDnumber; i++) {
+    uint8_t selLED = selectedLEDs[i];
+    if (LED[selLED].LEDPin < 30) {
+      port[i] = &PORTA;
+      mask[i] = 1 << LED[selLED].LEDPin - 22;
+    } else if (LED[selLED].LEDPin < 38) {
+      port[i] = &PORTB;
+      mask[i] = 1 << (38 - LED[selLED].LEDPin);
+    }
+    analogWrite(LED[selLED].PWMPin, pwmVal[i]);
+  }
+  
+  while (whileFlag == true) {
+    for (int i = 0; i < LEDnumber; i++) {
+      switchLED(i, tOn[i], port[i], mask[i]);
+    }
+    changePWM(LED);
+    tBefDelay = micros();
+    while (tBefDelay - tAfterStop[LEDnumber-1] < tPause) tBefDelay = micros();
+  }
+
+
+  PORTA &= B01010101;
+  PORTB &= B01010101;
+  delay(2000);
+  whileFlag = true;
+  Serial.println(F("Leaving FRET!"));
+  Serial.flush();
+}
+
+
+
+
+

@@ -154,6 +154,53 @@ Serial.println(F("Program 4: FRETwPulse selected. Waiting for data..."));
         delay(100);
       }
       
+      tPause = readSerialDataLong(); 
+
+      uint8_t selectedPulseLED = readSerialDataInt8();
+      uint8_t pulseLEDpwm = readSerialDataInt8();
+      unsigned long tPulseDur = readSerialDataLong();
+      unsigned long tPulseTime = readSerialDataLong();
+
+      Serial.println(F("Data Received, Starting FRETwPulse"));
+      FRETwPulse(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause, tPulseDur, tPulseTime, selectedPulseLED, pulseLEDpwm);
+      break;
+    }
+    case 5: { //FRET MFLI
+      Serial.println(F("Program 5: FRET MFLI selected. Waiting for data..."));
+      LEDnumber = readSerialDataInt8();
+
+      tOn = new unsigned long[LEDnumber];
+      pwmVal = new uint8_t[LEDnumber];
+      selectedLEDs = new uint8_t[LEDnumber];
+
+      for (int i = 0; i < LEDnumber; i++) {
+        selectedLEDs[i] = readSerialDataInt8();
+        pwmVal[i] = readSerialDataInt8();
+        tOn[i] = readSerialDataLong();
+        delay(100);
+      }
+      
+      tPause = readSerialDataLong();
+      
+      Serial.println(F("Data Received, Starting FRETMFLI"));
+      FRETMFLI(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause);
+      break;
+    }
+   case 6: {//FRETwPulse
+Serial.println(F("Program 6: FRETwPulse selected. Waiting for data..."));
+      LEDnumber = readSerialDataInt8();
+
+      tOn = new unsigned long[LEDnumber];
+      pwmVal = new uint8_t[LEDnumber];
+      selectedLEDs = new uint8_t[LEDnumber];
+
+      for (int i = 0; i < LEDnumber; i++) {
+        selectedLEDs[i] = readSerialDataInt8();
+        pwmVal[i] = readSerialDataInt8();
+        tOn[i] = readSerialDataLong();
+        delay(100);
+      }
+      
       tPause = readSerialDataLong();
       
 
@@ -169,10 +216,10 @@ Serial.println(F("Program 4: FRETwPulse selected. Waiting for data..."));
 
   
       Serial.println(F("Data Received, Starting FRETwPulse"));
-      FRETwPulse(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause, tPulseDur, tPulseTime, selectedPulseLED, pulseLEDpwm);
+      FRETwPulseMFLI(LEDnumber, selectedLEDs, LEDs, pwmVal, tOn, tPause, tPulseDur, tPulseTime, selectedPulseLED, pulseLEDpwm);
       break;
     }
-    default:
+     default:
       Serial.println(F("ERROR - Program not found!- Restarting now"));
 Serial.flush();
       break;
