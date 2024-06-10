@@ -19,7 +19,7 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTB;
-      mask[i] = 1 << (38 - LED[selLED].LEDPin);
+      mask[i] = 1 << (37 - LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
@@ -44,7 +44,7 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
 
 
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTC &= B10101010;
   delay(2000);
   whileFlag = true;
   Serial.println(F("Leaving FRET!"));
@@ -54,6 +54,7 @@ void FRET(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmV
 
 void FRETMFLI(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[], unsigned long tPause) {
   // Determine the port and mask for the specified pin
+  DDRK |= (1 << 7);  // set PK7 as an output
   volatile uint8_t *port[LEDnumber];
   uint8_t mask[LEDnumber];
 
@@ -68,7 +69,7 @@ void FRETMFLI(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t 
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTB;
-      mask[i] = 1 << (38 - LED[selLED].LEDPin);
+      mask[i] = 1 << (37 - LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
@@ -84,7 +85,7 @@ void FRETMFLI(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t 
 
 
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTC &= B10101010;
   delay(2000);
   whileFlag = true;
   Serial.println(F("Leaving FRET!"));

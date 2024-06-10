@@ -25,7 +25,7 @@ unsigned long tPause, unsigned long tPulseDur, unsigned long tPulseTime, uint8_t
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTB;
-      mask[i] = 1 << (38 - LED[selLED].LEDPin);
+      mask[i] = 1 << (37 - LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
@@ -38,7 +38,7 @@ unsigned long tPause, unsigned long tPulseDur, unsigned long tPulseTime, uint8_t
       maskPulse = 1 << LED[selectedPulseLED].LEDPin - 22;
     } else if (LED[selectedPulseLED].LEDPin < 38) {
       portPulse = &PORTC;
-      maskPulse = 1 << (38 - LED[selectedPulseLED].LEDPin);
+      maskPulse = 1 << (37 - LED[selectedPulseLED].LEDPin);
     }
     analogWrite(LED[selectedPulseLED].PWMPin, pulseLEDpwm);
 
@@ -81,7 +81,7 @@ while (whileFlag) {
 
 
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTC &= B10101010;
   delay(2000);
   whileFlag = true;
   Serial.println(F("Leaving FRET!"));
@@ -91,6 +91,8 @@ while (whileFlag) {
 
 void FRETwPulseMFLI(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint8_t pwmVal[], unsigned long tOn[], 
 unsigned long tPause, unsigned long tPulseDur, unsigned long tPulseTime, uint8_t selectedPulseLED, uint8_t pulseLEDpwm) {
+  DDRK |= (1 << 7);  // set PK7 as an output
+  
   // Determine the port and mask for the specified pin
   volatile uint8_t *port[LEDnumber];
   uint8_t mask[LEDnumber];
@@ -106,7 +108,7 @@ unsigned long tPause, unsigned long tPulseDur, unsigned long tPulseTime, uint8_t
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
       port[i] = &PORTB;
-      mask[i] = 1 << (38 - LED[selLED].LEDPin);
+      mask[i] = 1 << (37 - LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
   }
@@ -119,7 +121,7 @@ unsigned long tPause, unsigned long tPulseDur, unsigned long tPulseTime, uint8_t
       maskPulse = 1 << LED[selectedPulseLED].LEDPin - 22;
     } else if (LED[selectedPulseLED].LEDPin < 38) {
       portPulse = &PORTC;
-      maskPulse = 1 << (38 - LED[selectedPulseLED].LEDPin);
+      maskPulse = 1 << (37 - LED[selectedPulseLED].LEDPin);
     }
     analogWrite(LED[selectedPulseLED].PWMPin, pulseLEDpwm);
 
@@ -158,7 +160,7 @@ while (whileFlag) {
 
 
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTC &= B10101010;
   delay(2000);
   whileFlag = true;
   Serial.println(F("Leaving FRET!"));

@@ -48,7 +48,7 @@ void setup() {
   DDRH = B01111000;  // Set PWM to output DP6,7,8,9
   DDRB = B00110101;  //Set LTC Powerports to Output and PWM to output DP10,11,51,53
   DDRA = B10101010;  // Set LED Pins to output DP 23,25,27,29
-  DDRC = B00010101;  // Set LED Pins to output DP 31,33,35,37
+  DDRC = B01010101;  // Set LED Pins to output DP 31,33,35,37
   DDRL = B00000101;  // Set LTC Pins to output DP 47,49
   DDRK &= B11111100;
   PORTL = PORTL | B00000101;

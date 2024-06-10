@@ -24,13 +24,13 @@ void switchLED(uint8_t LEDNum, unsigned long tOnInner,  volatile uint8_t *port, 
 
   *port |= mask;  //Pin  High
   //Set Trigger
-  PORTC |= (1 << 7);
+   PORTK |= (1 << 7);  // set PK7 high
+   PORTK &= ~(1 << 7);  // set PK7 low
    unsigned long tAfterOnInner = micros();
    unsigned long tBefStopInner = micros();
   while (tBefStopInner - tAfterOnInner < tOnInner) {
     tBefStopInner = micros();
   }
-  PORTC &= ~(1 << 7);
   // Set Trigger
   *port &= ~mask;  // Pin  LOW
 }

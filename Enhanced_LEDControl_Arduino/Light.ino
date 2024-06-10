@@ -13,8 +13,8 @@
       port[i] = &PORTA;
       mask[i] = 1 << LED[selLED].LEDPin - 22;
     } else if (LED[selLED].LEDPin < 38) {
-      port[i] = &PORTB;
-      mask[i] = 1 << (38 -  LED[selLED].LEDPin);
+      port[i] = &PORTC;
+      mask[i] = 1 << (37 -  LED[selLED].LEDPin);
     }
     analogWrite(LED[selLED].PWMPin, pwmVal[i]);
     *port[i] |= mask[i];  //Pin  High
@@ -24,7 +24,7 @@
  }
 
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTC &= B10101010;
   whileFlag = true;
   Serial.println(F("Leaving Light!"));
   Serial.flush();
