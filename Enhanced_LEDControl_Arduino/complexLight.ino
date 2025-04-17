@@ -54,7 +54,7 @@ void complexLight(uint8_t LEDnumber, uint8_t selectedLEDs[], LEDpins LED[], uint
   }
   fin:
   PORTA &= B01010101;
-  PORTB &= B01010101;
+  PORTB &= B10101010;
   whileFlag = true;
   Serial.println(F("Leaving complex Light!"));
   Serial.flush();
